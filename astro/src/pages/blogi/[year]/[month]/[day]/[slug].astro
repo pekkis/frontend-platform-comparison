@@ -1,0 +1,65 @@
+---
+import { DateTime } from "luxon";
+import { graphQLClient } from "../../../../../services/graphql";
+import type { BlogPostType, HeadlineType } from "../../../../../types";
+import { headlinesQuery } from "../../../../../queries/HeadlinesQuery";
+import Layout from "../../../../../layouts/Layout.astro";
+import { blogPostQuery } from "../../../../../queries/BlogPostQuery";
+import { documentToHtmlString } from "@contentful/rich-text-html-renderer";
+import { BLOCKS, MARKS } from "@contentful/rich-text-types";
+import Main from "../../../../../components/Main.astro";
+
+export async function getStaticPaths() {
+  const headlines = await graphQLClient.request<{
+    blogPostCollection: {
+      total: number;
+      items: HeadlineType[];
+    };
+  }>(headlinesQuery, {
+    limit: 6,
+  });
+
+  const tushi = headlines.blogPostCollection.items.map((item) => {
+    const dt = DateTime.fromISO(item.date).setZone("Europe/Helsinki");
+
+    return {
+      params: {
+        year: dt.year,
+        month: dt.month,
+        day: dt.day,
+        slug: item.slug,
+      },
+    };
+  });
+
+  console.log("TUSHI", tushi);
+  return tushi;
+}
+
+const { slug } = Astro.params;
+const ret = await graphQLClient.request<{
+  blogPostCollection: {
+    items: BlogPostType[];
+  };
+}>(blogPostQuery, {
+  slug,
+});
+
+const post = ret.blogPostCollection.items[0];
+---
+
+<Layout title="Laarilaa">
+  <Main>
+    <h1>{post.title}</h1>
+
+    <article
+      set:html={documentToHtmlString(post.content.json, {
+        renderNode: {
+          [BLOCKS.EMBEDDED_ASSET]: (node, next) => {
+            return `<div>KUVA</div>`;
+          },
+        },
+      })}
+    />
+  </Main>
+</Layout>

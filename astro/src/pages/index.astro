@@ -1,0 +1,43 @@
+---
+import Layout from "../layouts/Layout.astro";
+import { graphQLClient } from "../services/graphql";
+import type { HeadlineType } from "../types";
+import { headlinesQuery } from "../queries/HeadlinesQuery";
+import { blogPostUrl } from "../services/url";
+import Main from "../components/Main.astro";
+
+const headlines = await graphQLClient.request<{
+  blogPostCollection: {
+    total: number;
+    items: HeadlineType[];
+  };
+}>(headlinesQuery, {
+  limit: 6,
+});
+---
+
+<Layout title="Pekkis.dev">
+  <Main>
+    <h1>Peksun blogi</h1>
+    <ul>
+      {
+        headlines.blogPostCollection.items.map((post) => (
+          <li>
+            <a href={blogPostUrl(post)}>
+              <h2>{post.title}</h2>
+            </a>
+            <time>{post.date}</time>
+            <p>{post.ingress}</p>
+          </li>
+        ))
+      }
+    </ul>
+  </Main>
+</Layout>
+
+<style>
+  main {
+    margin: 2em auto;
+    max-width: 1000px;
+  }
+</style>
