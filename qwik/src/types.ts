@@ -1,3 +1,5 @@
+import type { Document } from "@contentful/rich-text-types";
+
 export type PostType = {
   mainImage: ContentfulImageData;
   slug: string;

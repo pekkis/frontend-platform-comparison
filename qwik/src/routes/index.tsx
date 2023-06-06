@@ -1,7 +1,8 @@
 import { component$ } from "@builder.io/qwik";
-import { type DocumentHead, routeLoader$ } from "@builder.io/qwik-city";
+import { type DocumentHead, routeLoader$, Link } from "@builder.io/qwik-city";
 import Peksu from "@/components/peksu/peksu";
 import { getHeadlines } from "@/services/blog";
+import { blogPostUrl } from "@/services/url";
 
 export const useBlogPosts = routeLoader$(async () => {
   const blogPosts = await getHeadlines();
@@ -18,7 +19,11 @@ export default component$(() => {
       {blogPosts.value.blogPostCollection.items.map((post) => {
         return (
           <div key={post.sys.id}>
-            <h2>{post.title}</h2>
+            <Link href={blogPostUrl(post)}>
+              <h2>{post.title}</h2>
+
+              <p>{post.ingress}</p>
+            </Link>
           </div>
         );
       })}
@@ -27,11 +32,11 @@ export default component$(() => {
 });
 
 export const head: DocumentHead = {
-  title: "Welcome to Qwik",
+  title: "Pekkis.eu: Qwik Edition",
   meta: [
     {
       name: "description",
-      content: "Qwik site description",
-    },
-  ],
+      content: "Peksun himapage protaali"
+    }
+  ]
 };
