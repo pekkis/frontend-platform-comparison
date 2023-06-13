@@ -1,14 +1,20 @@
-import Document from "@/components/contentful/Document";
+import BlogInlinePicture from "@/components/BlogInlinePicture";
+import RichTextDocument from "@/components/contentful/RichTextDocument";
+import UnknownBlockComponent from "@/components/contentful/UnknownBlockComponent";
 import { getBlogPosts } from "@/services/blog";
-import { documentToReactComponents } from "@/services/contentful";
+import type { ContentfulImageData } from "@/types";
 import { type BlogPostType } from "@/types";
-import { JSXNode } from "@builder.io/qwik";
 import { component$ } from "@builder.io/qwik";
 import type { DocumentHead } from "@builder.io/qwik-city";
 import { routeLoader$ } from "@builder.io/qwik-city";
+import type { Node } from "@contentful/rich-text-types";
+import { BLOCKS } from "@contentful/rich-text-types";
 
 export const useBlogPost = routeLoader$(async (requestEvent) => {
-  const blogPosts = await getBlogPosts(requestEvent.params.slug);
+  const blogPosts = await getBlogPosts(
+    requestEvent.params.slug,
+    process.env.CONTENTFUL_PREVIEW === "true"
+  );
 
   if (blogPosts.blogPostCollection.items.length !== 1) {
     return requestEvent.fail(404, {
@@ -30,6 +36,23 @@ export const head: DocumentHead = ({ resolveValue }) => {
   };
 };
 
+const EmbeddedAsset = component$<{
+  node: Node;
+  context: {
+    assets: {
+      [k: string]: ContentfulImageData;
+    };
+  };
+}>(({ node, context: { assets } }) => {
+  const assetore = assets[node.data.target.sys.id];
+
+  if (assetore) {
+    return <BlogInlinePicture asset={assetore} />;
+  }
+
+  return <div>IMAISE NODEA LÄSKI</div>;
+});
+
 export default component$(() => {
   const post = useBlogPost();
 
@@ -39,11 +62,20 @@ export default component$(() => {
 
   const ripuli = post.value as BlogPostType;
 
+  const assets = Object.fromEntries(
+    ripuli.content.links.assets.block.map((b) => {
+      return [b.sys.id, b];
+    })
+  );
+
   return (
     <article>
       <h1>{ripuli.title}</h1>
-
-      <Document document={ripuli.content.json} />
+      <RichTextDocument
+        context={{ assets }}
+        document={ripuli.content.json}
+        nodeRenderers={{ [BLOCKS.EMBEDDED_ASSET]: EmbeddedAsset }}
+      />
     </article>
   );
 });

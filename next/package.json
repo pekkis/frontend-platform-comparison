@@ -1,0 +1,60 @@
+{
+  "name": "pekkis.eu",
+  "private": true,
+  "description": "pekkis.eu",
+  "version": "2.0.0",
+  "author": "Mikko Forsström aka Pekkis <pekkisx@gmail.com>",
+  "dependencies": {
+    "@contentful/rich-text-react-renderer": "^15.16.4",
+    "@contentful/rich-text-types": "^16.1.0",
+    "@next/bundle-analyzer": "^13.4.1",
+    "@vanilla-extract/css": "^1.11.0",
+    "clsx": "^1.2.1",
+    "encoding": "^0.1.13",
+    "graphql": "^16.6.0",
+    "graphql-request": "^6.0.0",
+    "luxon": "^3.3.0",
+    "next": "^13.4.1",
+    "prismjs": "^1.29.0",
+    "ramda": "^0.29.0",
+    "react": "18.3.0-canary-16d053d59-20230506",
+    "react-cookie-consent": "^8.0.1",
+    "react-dom": "18.3.0-canary-16d053d59-20230506",
+    "react-icons": "^4.8.0",
+    "react-intersection-observer": "^9.4.3",
+    "react-player": "^2.12.0"
+  },
+  "devDependencies": {
+    "@types/luxon": "^3.3.0",
+    "@types/node": "^20.1.1",
+    "@types/ramda": "^0.29.1",
+    "@types/react": "18.2.6",
+    "@typescript-eslint/eslint-plugin": "^5.59.5",
+    "@vanilla-extract/next-plugin": "^2.1.2",
+    "eslint": "^8.40.0",
+    "eslint-config-next": "^13.4.1",
+    "eslint-config-prettier": "^8.8.0",
+    "eslint-plugin-prettier": "^4.2.1",
+    "prettier": "^2.8.8",
+    "ts-node": "^10.9.1",
+    "typescript": "^5.0.4"
+  },
+  "homepage": "https://www.pekkis.eu",
+  "keywords": [
+    "nextjs",
+    "himapage",
+    "portal"
+  ],
+  "license": "MIT",
+  "main": "n/a",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/gatsbyjs/gatsby-starter-blog.git"
+  },
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint"
+  }
+}

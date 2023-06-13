@@ -1,9 +1,8 @@
 import { A, Title, useRouteData } from "solid-start";
-import Counter from "~/components/Counter";
 
-import { For, createResource } from "solid-js";
-import { getHeadlines } from "~/services/blog";
+import { For } from "solid-js";
 import { createServerData$ } from "solid-start/server";
+import { getHeadlines } from "~/services/blog";
 import { blogPostUrl } from "~/services/url";
 
 export function routeData() {

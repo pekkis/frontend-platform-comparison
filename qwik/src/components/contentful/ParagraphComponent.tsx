@@ -1,22 +1,18 @@
 import { component$ } from "@builder.io/qwik";
 import { type Paragraph } from "@contentful/rich-text-types";
-import TextComponent from "./TextComponent";
-import InlineComponent from "./InlineComponent";
+import NodeList from "./NodeList";
+import type { RendererMap } from "./RichTextDocument";
 
 type Props = {
   node: Paragraph;
+  renderers: RendererMap;
+  context: any;
 };
 
-export default component$<Props>(({ node }) => {
+export default component$<Props>(({ node, renderers, context }) => {
   return (
     <p>
-      {node.content.map((n, i) => {
-        if (n.nodeType === "text") {
-          return <TextComponent key={i} node={n} />;
-        }
-
-        return <InlineComponent key={i} node={n} />;
-      })}
+      <NodeList nodes={node.content} renderers={renderers} context={context} />
     </p>
   );
 });

@@ -1,0 +1,7 @@
+# *
+User-agent: *
+Allow: /
+Disallow:
+
+# Sitemaps
+Sitemap: https://www.pekkis.eu/sitemap.xml

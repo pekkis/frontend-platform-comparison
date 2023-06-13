@@ -14,6 +14,12 @@ export default component$<Props>(({ mark }) => {
           <Slot />
         </strong>
       );
+    case "italic":
+      return (
+        <em>
+          <Slot />
+        </em>
+      );
   }
 
   return (

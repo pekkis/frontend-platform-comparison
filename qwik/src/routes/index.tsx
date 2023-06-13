@@ -5,7 +5,10 @@ import { getHeadlines } from "@/services/blog";
 import { blogPostUrl } from "@/services/url";
 
 export const useBlogPosts = routeLoader$(async () => {
-  const blogPosts = await getHeadlines();
+  const blogPosts = await getHeadlines(
+    5,
+    process.env.CONTENTFUL_PREVIEW === "true"
+  );
   return blogPosts;
 });
 

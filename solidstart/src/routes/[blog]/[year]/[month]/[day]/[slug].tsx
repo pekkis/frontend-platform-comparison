@@ -1,15 +1,6 @@
-import {
-  A,
-  ErrorBoundary,
-  RouteDataArgs,
-  Title,
-  useRouteData,
-} from "solid-start";
-
-import { For } from "solid-js";
-import { getBlogPosts } from "~/services/blog";
+import { ErrorBoundary, RouteDataArgs, Title, useRouteData } from "solid-start";
 import { ServerError, createServerData$ } from "solid-start/server";
-import { blogPostUrl } from "~/services/url";
+import { getBlogPosts } from "~/services/blog";
 import { BlogPostType } from "~/types";
 
 export function routeData({ params }: RouteDataArgs) {

@@ -1,4 +1,4 @@
-import { BlogPostType, HeadlineType } from "@/types";
+import type { BlogPostType, HeadlineType } from "@/types";
 import { blogPostQuery, graphQLClient, headlinesQuery } from "./graphql";
 
 export type BlogPostQueryResponse = {
@@ -13,22 +13,24 @@ export type HeadlinesQueryResponse = {
   };
 };
 
-export const getHeadlines = async (limit: number | undefined = undefined) => {
+export const getHeadlines = async (limit: number = 10, preview = false) => {
   const headlines = await graphQLClient.request<HeadlinesQueryResponse>(
     headlinesQuery,
     {
-      limit
+      limit,
+      preview
     }
   );
 
   return headlines;
 };
 
-export const getBlogPosts = async (slug: string) => {
+export const getBlogPosts = async (slug: string, preview = false) => {
   const ret = await graphQLClient.request<BlogPostQueryResponse>(
     blogPostQuery,
     {
-      slug
+      slug,
+      preview
     }
   );
 
