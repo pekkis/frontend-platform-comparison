@@ -1,23 +1,13 @@
 ---
-import { DateTime } from "luxon";
-import { graphQLClient } from "../../../../../services/graphql";
-import type { BlogPostType, HeadlineType } from "../../../../../types";
-import { headlinesQuery } from "../../../../../queries/HeadlinesQuery";
-import Layout from "../../../../../layouts/Layout.astro";
-import { blogPostQuery } from "../../../../../queries/BlogPostQuery";
 import { documentToHtmlString } from "@contentful/rich-text-html-renderer";
-import { BLOCKS, MARKS } from "@contentful/rich-text-types";
+import { BLOCKS } from "@contentful/rich-text-types";
+import { DateTime } from "luxon";
 import Main from "../../../../../components/Main.astro";
+import Layout from "../../../../../layouts/Layout.astro";
+import { getBlogPosts, getHeadlines } from "../../../../../services/blog";
 
 export async function getStaticPaths() {
-  const headlines = await graphQLClient.request<{
-    blogPostCollection: {
-      total: number;
-      items: HeadlineType[];
-    };
-  }>(headlinesQuery, {
-    limit: 6,
-  });
+  const headlines = await getHeadlines(1000, false);
 
   const tushi = headlines.blogPostCollection.items.map((item) => {
     const dt = DateTime.fromISO(item.date).setZone("Europe/Helsinki");
@@ -37,13 +27,7 @@ export async function getStaticPaths() {
 }
 
 const { slug } = Astro.params;
-const ret = await graphQLClient.request<{
-  blogPostCollection: {
-    items: BlogPostType[];
-  };
-}>(blogPostQuery, {
-  slug,
-});
+const ret = await getBlogPosts(slug!, false);
 
 const post = ret.blogPostCollection.items[0];
 ---
