@@ -57,7 +57,7 @@ export default component$(() => {
   const post = useBlogPost();
 
   if (post?.value?.errorMessage) {
-    return <div>articulado not found {tussi}</div>;
+    return <div>articulado not found</div>;
   }
 
   const ripuli = post.value as BlogPostType;

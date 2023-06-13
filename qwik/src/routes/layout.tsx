@@ -1,3 +1,4 @@
+import Main from "@/components/Main";
 import Footer from "@/components/footer";
 import Header from "@/components/header";
 import { component$, Slot } from "@builder.io/qwik";
@@ -20,12 +21,15 @@ export const useServerTimeLoader = routeLoader$(() => {
 });
 
 export default component$(() => {
+  const pieru = useServerTimeLoader();
+
   return (
     <>
       <Header />
-      <main>
+      <Main>
         <Slot />
-      </main>
+        {pieru.value.date}
+      </Main>
       <Footer />
     </>
   );
