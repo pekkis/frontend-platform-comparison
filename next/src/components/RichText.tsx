@@ -1,27 +1,22 @@
-import React, { FC, ReactNode } from "react";
+import { FC, ReactNode } from "react";
 
 import {
   BLOCKS,
-  MARKS,
-  INLINES,
-  Block,
-  Inline,
-  Node,
+  Heading1,
+  Heading2,
   Hyperlink,
-  Heading1
+  INLINES,
+  MARKS,
+  Node
 } from "@contentful/rich-text-types";
-import {
-  documentToReactComponents,
-  Options
-} from "@contentful/rich-text-react-renderer";
 
-import BlogInlinePicture from "./BlogInlinePicture";
-import Link from "next/link";
 import { BlogPostType, ContentfulImageData } from "@/types";
+import Link from "next/link";
+import BlogInlinePicture from "./BlogInlinePicture";
 import MainHeading from "./MainHeading";
 import SubHeading from "./SubHeading";
-import RichTextDocument, { RendererMap } from "./contentful/RichTextDocument";
 import NodeList from "./contentful/NodeList";
+import RichTextDocument, { RendererMap } from "./contentful/RichTextDocument";
 
 // const website_url = "https://www.pekkis.eu";
 
@@ -105,30 +100,6 @@ const H2Component: FC<NodeComponentProps<Heading2>> = ({
     </SubHeading>
   );
 };
-
-/*
-const createOptions = (post: BlogPostType): Options => {
-  const assets = Object.fromEntries(
-    post.content.links.assets.block.map((b) => {
-      return [b.sys.id, b];
-    })
-  );
-
-
-  const options: Options = {
-      [BLOCKS.HEADING_1]: (x, children) => {
-        return <MainHeading>{children}</MainHeading>;
-      },
-
-      [BLOCKS.HEADING_2]: (x, children) => {
-        return <SubHeading>{children}</SubHeading>;
-      },
-
-    }
-  };
-  return options;
-};
-*/
 
 type Props = {
   post: BlogPostType;

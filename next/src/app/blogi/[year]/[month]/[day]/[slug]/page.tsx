@@ -3,14 +3,20 @@ import { notFound } from "next/navigation";
 
 import { DateTime } from "luxon";
 import Link from "next/link";
-import { cache } from "react";
+import { Suspense, cache } from "react";
 import Bio from "@/components/Bio";
 import BlogContent from "@/components/BlogContent";
 import BlogHeader from "@/components/BlogHeader";
 import Layout from "@/components/Layout";
 import Padder from "@/components/Padder";
-import { getBlogPosts, getHeadlines } from "@/services/blog";
+import * as blogService from "@/services/blog";
 import { blogPostUrl } from "@/services/url";
+
+import * as styles from "./BlogPostPage.css";
+import clsx from "clsx";
+import Headlines from "./Headlines";
+import HeadlinesLoader from "./HeadlinesLoader";
+import Spinner from "@/components/Spinner";
 
 type Props = {
   params: {
@@ -23,12 +29,27 @@ type Props = {
 
 export const revalidate = 60 * 10;
 
+const getExpensiveHeadlines = cache(
+  (
+    limit: number,
+    preview: boolean
+  ): Promise<blogService.HeadlinesQueryResponse> => {
+    return new Promise(async (resolve) => {
+      const headlines = await blogService.getHeadlines(limit, preview);
+
+      setTimeout(() => {
+        resolve(headlines);
+      }, 5000);
+    });
+  }
+);
+
 export const getPost = cache(async (slug: string) => {
-  const headlines = await getHeadlines(
+  const headlines = await blogService.getHeadlines(
     100,
     process.env.CONTENTFUL_PREVIEW === "true"
   );
-  const ret = await getBlogPosts(
+  const ret = await blogService.getBlogPosts(
     slug,
     process.env.CONTENTFUL_PREVIEW === "true"
   );
@@ -67,6 +88,8 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 export default async function BlogPostPage({ params }: Props) {
   const { post, next, previous } = await getPost(params.slug);
 
+  // const expensiveHeadlines = await getExpensiveHeadlines(10, false);
+
   const date = DateTime.fromISO(post.date)
     .setLocale("fi")
     .setZone("Europe/Helsinki");
@@ -81,41 +104,73 @@ export default async function BlogPostPage({ params }: Props) {
 
   return (
     <Layout>
-      <article
-        className="blog-post"
-        itemScope
-        itemType="http://schema.org/Article"
-      >
-        <BlogHeader post={post} />
-        <BlogContent post={post} />
+      <div className={styles.grid}>
+        <div className={styles.content}>
+          <article
+            className={clsx("blog-post")}
+            itemScope
+            itemType="http://schema.org/Article"
+          >
+            <BlogHeader post={post} />
+            <BlogContent post={post} />
 
-        <footer>
+            <footer>
+              <Padder>
+                <Bio />
+              </Padder>
+            </footer>
+          </article>
+
           <Padder>
-            <Bio />
-          </Padder>
-        </footer>
-      </article>
-      <Padder>
-        <nav className="blog-post-nav">
-          <ul>
-            {previous && (
-              <li>
-                <Link href={blogPostUrl(previous)} rel="prev">
-                  ← {previous.title}
-                </Link>
-              </li>
-            )}
+            <nav className="blog-post-nav">
+              <ul>
+                {previous && (
+                  <li>
+                    <Link href={blogPostUrl(previous)} rel="prev">
+                      ← {previous.title}
+                    </Link>
+                  </li>
+                )}
 
-            {next && (
-              <li>
-                <Link href={blogPostUrl(next)} rel="next">
-                  {next.title} →
-                </Link>
-              </li>
-            )}
-          </ul>
-        </nav>
-      </Padder>
+                {next && (
+                  <li>
+                    <Link href={blogPostUrl(next)} rel="next">
+                      {next.title} →
+                    </Link>
+                  </li>
+                )}
+              </ul>
+            </nav>
+          </Padder>
+        </div>
+
+        <aside className={styles.aside}>
+          <p>
+            Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vivamus non
+            vulputate magna. Aliquam dictum diam lacus, sed suscipit diam luctus
+            id. Duis pellentesque, nulla id venenatis auctor, nisl magna
+            placerat magna, vitae iaculis quam nulla vitae lacus. Sed laoreet
+            scelerisque odio quis vehicula. Duis ac neque gravida purus
+            dignissim congue. Duis cursus condimentum erat id faucibus. Ut vitae
+            arcu a nisi bibendum varius.
+          </p>
+
+          <p>
+            Etiam mollis erat sem, ut sodales erat consectetur vel. Aliquam
+            ullamcorper at augue ac bibendum. Morbi quis arcu dapibus, sodales
+            ipsum ac, malesuada ligula. Aliquam porttitor urna et hendrerit
+            porta. Phasellus dapibus mi non sem pellentesque, placerat dictum
+            diam porta. Vestibulum venenatis est sed semper eleifend. Fusce non
+            tincidunt purus, nec sollicitudin eros. Mauris eu diam ut ipsum
+            viverra egestas. Donec et dictum magna, at sollicitudin erat.
+            Curabitur tincidunt rhoncus tortor, sed porta erat congue vitae. Sed
+            sapien libero, congue in odio quis, mollis consequat erat. Curabitur
+            mauris odio, porta tempus laoreet accumsan, ultrices nec neque. Ut
+            orci risus, ullamcorper eu nisi eu, bibendum rutrum nisi. Donec
+            hendrerit diam sit amet lobortis sollicitudin.
+          </p>
+        </aside>
+      </div>
     </Layout>
   );
 }
